@@ -69,6 +69,27 @@ Run the tests
 
 ```truffle test```
 
+### Deploying the contracts public Testnets
+
+Technically, this can be deployed in other networks (Polygon, BSC, Ropsten, etc), but for this project, I have deployed in Rinkeby.
+
+You may use the same mnemonic for deploying the contract.  
+
+You may run the command below to derive the private key for your mnemonic.
+
+```npx mnemonic-to-private-key "<your mnemonic phrase>"``` 
+
+You may import it to metamask to keep track of the funds using the private key. 
+
+A good faucet for the Rinkeby network can be accessed here: https://faucets.chain.link/rinkeby. Just put the wallet address to get funds.
+
+You may get a wallet provider either from Moralis or Infura and set the `RINKEBY_WALLET_PROVIDER` in the `.env` file.
+
+To deploy, execute the migration through truffle.
+
+```truffle migrate --network=rinkeby```
+
+After the deployment get the contract address for the deployed NiftyFiftyNFT smart contract and update the Angular DApp contract in `src/environments/env.ts` file.
 
 
 # DApp
@@ -120,4 +141,10 @@ Run the DApp locally
 
 
 Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+
+
+## DApp deployed to Rinkeby Testnet
+
+https://niftyfifty.jescueta.com/
+
 
