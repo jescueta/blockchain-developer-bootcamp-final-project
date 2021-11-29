@@ -28,7 +28,7 @@ export const defaultEnv: Env = {
         serverUrl: 'MORALIS_SERVER_URL'
       },
       contractAddresses: {
-        niftyFifty: '0xA63eBd72D4f8021EBD40E7b734Bb0c9616a96b50'
+        niftyFifty: '0x718692b5005cDecCcc0283682Bf77217C61e9198'
       }
     }
 
