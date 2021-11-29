@@ -1,0 +1,72 @@
+<!-- STRAT NAVBAR -->
+<nav class="navbar navbar-expand-lg fixed-top navbar-custom sticky sticky-dark" id="navbar"
+    (window:scroll)="windowScroll()">
+    <div class="container">
+        <a class="navbar-brand" href="#">Nifty Fifty NFT</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" (click)="toggleMenu()">
+            <span class="ti-menu"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mx-auto" id="navbar-navlist">
+                <li class="nav-item" [ngClass]="{'active':currentSection === 'home'}">
+                    <a [ngxScrollTo]="'#home'" class="nav-link" href="javascript: void(0);">Home</a>
+                </li>
+                <li *ngIf="_currentUser?.authenticated()"class="nav-item" [ngClass]="{'active':currentSection === 'minting'}">
+                    <a [ngxScrollTo]="'#minting'" class="nav-link" href="javascript: void(0);">Start Minting</a>
+                </li>
+                <li *ngIf="_currentUser" class="nav-item" [ngClass]="{'active':currentSection === 'gallery'}">
+                    <a [ngxScrollTo]="'#gallery'" class="nav-link" href="javascript: void(0);">Your NFT Gallery</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/jescueta">View in Github</a>
+                </li>
+                <li *ngIf="!_currentUser" class="nav-item">
+                    <a (click)="login()" class="nav-link" href="javascript: void(0);">Connect to Metamask</a>
+                </li>
+                <li *ngIf="_currentUser?.authenticated()" class="nav-item">
+                    <a (click)="logout()" class="nav-link" href="javascript: void(0);">Logout</a>
+                </li>
+                
+            </ul>
+            <div>
+                <ul class="text-right list-unstyled list-inline mb-0 nav-social">
+                    <li class="list-inline-item text-white nav-number"><i class="ti-email"></i>&nbsp;<span>jescueta@gmail.com</span></li>
+                </ul>
+                <ul *ngIf="_currentUser" class="text-right list-unstyled list-inline mb-0 nav-social">
+                    <li class="list-inline-item text-white nav-numbe">Connected to Wallet: &nbsp;<span class="d-block text-truncate" [title]="_currentUser?.get('ethAddress')" style="max-width: 150px;">{{_currentUser?.get('ethAddress')}}</span></li>
+                </ul>
+            </div>
+            
+        </div>
+    </div>
+</nav>
+<!-- END NAVBAR -->
+<div appScrollspy [spiedTags]="['SECTION']" (sectionChange)="onSectionChange($event)">
+    <!-- START HOME -->
+    <section class="section bg-home half-home" id="home">
+        <div class="home-center">
+            <div class="home-desc-center">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-10">
+                            <div class="text-center">
+                                <h1 class="text-white home-title mb-0">Earn Royalties for your NFTs.</h1>
+                                <p class="text-muted home-subtitle-center home-subtitle mt-4 mb-0 mx-auto">A minted Nifty Fifty NFT gives artists royalties for all future transfers of their NFT. Receive the royalties in any ERC20 of your choice. 50% of the royalties will be split with Nifty Fifty only for the first 10 NFT transfers.</p>
+                                <div class="mt-4">
+                                    <a [ngxScrollTo]="'#minting'" class="btn btn-outline-white btn-round">Start Minting</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END HOME -->
+
+    <app-minting [userLogin]="userLogin"></app-minting>
+    <app-gallery [userLogin]="userLogin"></app-gallery>
+    <app-footer></app-footer>
+</div>
