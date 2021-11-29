@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 /// @title NiftyFiftyNFT - NFT Contract for minting Royalty NFTs for transfers (sales/trade) with royalty sharing with the contract owner.
 /// @notice You may use this contract for basic minting and transfer functionalities.
@@ -24,6 +25,7 @@ contract NiftyFiftyNFT is ERC721URIStorage, Ownable {
         uint amount;
         address artist;
         uint counter;
+        uint maxRoyaltyCount;
     }
 
     /// @dev Token mapping for each artist of the NFT
@@ -37,8 +39,13 @@ contract NiftyFiftyNFT is ERC721URIStorage, Ownable {
 
     /// @notice Constructor
     constructor() ERC721('NiftyFiftyNFT', 'NIFNFT') {
-        maxRoyaltyCount = 10;
         // this can be changed later on
+        maxRoyaltyCount = 10;
+    }
+
+    /// @notice change the default maximum number of royalty sharing count for subsequent minting
+    function updateMaxRoyaltyCount(uint count) public onlyOwner {
+        maxRoyaltyCount = count;
     }
 
     /// @dev Accessor for the royalty details for a given NFT tokenId
@@ -67,6 +74,7 @@ contract NiftyFiftyNFT is ERC721URIStorage, Ownable {
         royaltyDetails[tokenId].royaltyToken = _royaltyToken;
         royaltyDetails[tokenId].amount = _amount;
         royaltyDetails[tokenId].artist = msg.sender;
+        royaltyDetails[tokenId].maxRoyaltyCount = maxRoyaltyCount;
         royaltyDetails[tokenId].counter = 0;
         _mint(msg.sender, tokenId);
         tokenIdMap[msg.sender].push(tokenId);
@@ -79,17 +87,24 @@ contract NiftyFiftyNFT is ERC721URIStorage, Ownable {
     function _payRoyalty(address from, uint tokenId) internal {
         RoyaltyDetail memory _rdetails = royaltyDetails[tokenId];
         IERC20 token = IERC20(_rdetails.royaltyToken);
-
-        if (_rdetails.counter >= maxRoyaltyCount) {
+        if (_rdetails.counter >= _rdetails.maxRoyaltyCount) {
             if (from != _rdetails.artist) {
-                token.transferFrom(from, _rdetails.artist, _rdetails.amount);
+                bool success = transferERC20Token(token, from, _rdetails.artist, _rdetails.amount);
+                require(success, "Royalty transfer to artist failed.");
             }
         } else {
             uint split = _rdetails.amount.div(2);
-            token.transferFrom(from, owner(), split);
-            token.transferFrom(from, _rdetails.artist, split);
-            royaltyDetails[tokenId].counter = royaltyDetails[tokenId].counter + 1;
+            royaltyDetails[tokenId].counter = royaltyDetails[tokenId].counter.add(1);
+            bool success = transferERC20Token(token, from, owner(), split);
+            require(success, "Royalty transfer to owner failed.");
+            success = transferERC20Token(token, from, _rdetails.artist, split);
+            require(success, "Royalty transfer to artist failed.");
         }
+    }
+
+    function transferERC20Token(IERC20 token, address from, address to, uint amount) internal returns (bool) {
+        require(amount <= token.balanceOf(from), "Not enough balance.");
+        return token.transferFrom(from, to, amount);
     }
 
     /// @dev Overridden function to add logic to pay the royalty for every transfer
