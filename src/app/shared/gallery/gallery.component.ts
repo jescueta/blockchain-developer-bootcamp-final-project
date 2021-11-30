@@ -25,32 +25,46 @@ export class GalleryComponent implements OnInit {
 
 
   constructor(private cdr: ChangeDetectorRef,
-    private contractService:NiftyFiftyContractService,
+    private contractService: NiftyFiftyContractService,
     private formBuilder: FormBuilder){}
 
   ngOnInit(): void {
+    this.subscribeNfts();
+
+    this.contractService.onMint((minted) => {
+      console.info(minted)
+      this.getNfts();
+    })
+  }
+
+  async refreshGallery(){
     this.getNfts();
   }
 
-
-
-  getNfts(){
+  subscribeNfts(){
     this.userLogin.subscribe(async (user) => {
       this._currentUser = user;
       if (!user) {
         this.nfts = [];
         return;
       }
-      const nfts = await Moralis.Web3.getNFTs({chain: environment.network.chain, address: user?.attributes['ethAddress']});
-      this.nfts = [];
-      nfts.forEach(async element => {
-        element['metadata'] = await this.getMetadata(element);
-        this.nfts.push(element)
-      });
+      // const nfts= await Moralis.Web3.getNFTs({chain: environment.network.chain, address: user?.attributes['ethAddress']});
+      this.getNfts();
 
     });
 
   }
+
+  async getNfts(){
+    const nfts = await this.contractService.getNftTokensOwned(this._currentUser?.attributes['ethAddress']);
+    this.nfts = [];
+    nfts.forEach(async element => {
+      const metadata = await this.contractService.loadUrl(element.token_uri).toPromise();
+      this.nfts.push({token_address: environment.network.contractAddresses.niftyFifty, symbol: 'NIFNFT', token_id: element.token_id, token_uri: element.token_uri, metadata: metadata});
+    });
+  }
+
+
 
 
   async getMetadata(nft: any) {

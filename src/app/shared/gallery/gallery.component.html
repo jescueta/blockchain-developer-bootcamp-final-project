@@ -6,14 +6,15 @@
                 <i class="ti-bookmark-alt title-icon text-muted"></i>
                 <h3 class="title">Your <span class="fw-bold">NFT Gallery</span></h3>
                 <p *ngIf="!_currentUser" class="text-muted mt-3 title-subtitle mx-auto">You don't seem to be connected to a wallet. Please connect to a wallet to view your gallery.</p>
-                <p *ngIf="_currentUser" class="text-muted mt-3 title-subtitle mx-auto">It may take a while for your gallery to be refreshed here for newly minted NFTs.</p>
+                <p *ngIf="_currentUser" class="text-muted mt-3 title-subtitle mx-auto">Below are your NIFNFT collection. You may view them as well in OpenSea!</p>
+                <p *ngIf="_currentUser" class="text-muted mt-1 title-subtitle mx-auto" (click)="refreshGallery()">
+                    <a href="#gallery">Click here to refresh</a></p>
             </div>
         </div>
 
         
         <div class="row ">
             <div id="image-gallery">
-                
                 <div class="img-container" *ngFor="let n of nfts">
                   <div class="img">
                     <img class="gallery-frame" [src]="n['metadata']['image']"/>

@@ -52,7 +52,7 @@ export class MintingComponent implements OnInit {
     this.getErc20Tokens();
     this.minting.subscribe((m) => {
       this.isMinting = m;
-    })
+    });
   }
 
   setTokenInput(n: number) {
@@ -90,18 +90,19 @@ export class MintingComponent implements OnInit {
     this.ipfsUploadService.uploadFormToIpfs(this.mintNftForm).then(async (uploaded: any)=>{
       uploaded.ipfs();
       const form = this.mintNftForm;
-      try{
-        await this.contractService.mintToken(uploaded.ipfs(), form.get('tokenAddress').value, form.get('amount').value).then((response: any) => {
-        this.minting.next(false);
+      try {
+        await this.contractService.mintToken(uploaded.ipfs(), form.get('tokenAddress').value,
+            form.get('amount').value).then((response: any) => {
+          this.minting.next(false);
 
-        this.toastrService.info(`Your NFT has been successfuly minted with transaction hash +`+response.transactionHash, "Success");
-        
-        this.mintNftForm.reset();
-        // TODO: handle successful mint
-      });
-      }catch(err) {
+          this.toastrService.info(`Your NFT has been successfuly minted with transaction hash ${response.transactionHash}`, 'Success');
+
+          this.mintNftForm.reset();
+          // TODO: handle successful mint
+        });
+      } catch (err) {
         this.minting.next(false);
-        this.toastrService.error(err.message, "Unable to mint NFT")
+        this.toastrService.error(err.message, 'Unable to mint NFT');
       }
     });
 

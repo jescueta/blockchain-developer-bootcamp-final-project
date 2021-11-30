@@ -19,8 +19,6 @@ export class IndexComponent implements OnInit {
 
   uploaded = {url: ''};
 
-  erc20Tokens: any = [];
-
   @ViewChild('fileInput')
   fileInput: any;
 
@@ -86,40 +84,53 @@ export class IndexComponent implements OnInit {
     // this.contractService.subscribeToAccountChanges((s) => {
     //   this.login('metamask');
     // })
-    
-    
+  }
+
+  checkWeb3() {
+    const eth = window['ethereum'];
+    const installed = !eth || !eth.on;
+    if (!eth || !eth.on) {
+      this.toastrService.warning("Metamask is not installed. Please install Metamask.")
+    }
+    return !installed;
   }
 
   initMoralis(acct: string) {
     // this.logout();
-    Moralis.start({
-      appId: environment.network.moralis.appId,
-      serverUrl: environment.network.moralis.serverUrl,
-    })
-      .then(() => console.info('Moralis has been initialised.'))
-      .finally(() => this.setLoggedInUser(Moralis.User.current()));
-      // const provider: 'metamask' | 'walletconnect' = 'metamask';
-      // Moralis.Web3.onAccountsChanged((a)=> {
-      //   console.debug("======> ", Moralis.User.current());
-      //   Moralis.Web3.authenticate({provider});
-      // });
+    if (this.checkWeb3()) {
+      Moralis.start({
+        appId: environment.network.moralis.appId,
+        serverUrl: environment.network.moralis.serverUrl,
+      }).then(() => {
+        console.info('Moralis has been initialised.');
+      }).catch((e) => {
+        this.toastrService.error('Unable to connect to the Moralis Server.');
+      }).finally(() => {
+        console.debug(Moralis.User.current());
+        this.setLoggedInUser(Moralis.User.current());
+      });
+    }
   }
 
   login(provider: 'metamask' | 'walletconnect' = 'metamask') {
     (provider === 'metamask'
-      ? Moralis.Web3.authenticate()
-      : Moralis.Web3.authenticate({ provider }))
-      .then(async (loggedInUser) => {
-        this.setLoggedInUser(loggedInUser);
-        const network = await this.contractService.getNetwork();
-        if (network === 4) {
-          this.toastrService.info("Connected to "+this.contractService.getNetworkName(await this.contractService.getNetwork()));
-        } else {
-          this.toastrService.warning("Connect to the "+environment.network.chain+" network instaed of the "+this.contractService.getNetworkName(await this.contractService.getNetwork()));
-        }
-        
-      })
-      .catch((e) => console.error(`Moralis '${provider}' login error:`, e));
+        ? Moralis.Web3.authenticate()
+        : Moralis.Web3.authenticate({provider}))
+        .then(async (loggedInUser) => {
+          this.setLoggedInUser(loggedInUser);
+          const network = await this.contractService.getNetwork();
+          if (network === 4) {
+            this.toastrService.info('Connected to ' + this.contractService.getNetworkName(await this.contractService.getNetwork()));
+          } else {
+            this.toastrService.warning('Connect to the ' + environment.network.chain + ' network instaed of the ' +
+                this.contractService.getNetworkName(await this.contractService.getNetwork()));
+          }
+
+        })
+        .catch((e) => {
+          this.toastrService.error("Unable to connect to the Moralis server.");
+          console.error(`Moralis '${provider}' login error:`, e)
+        });
   }
 
   logout() {
