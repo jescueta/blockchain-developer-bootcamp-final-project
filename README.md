@@ -6,6 +6,24 @@ This is a simple DApp that allows users/artists to mint their own NFT and receiv
 
 The smart contract leverages on ERC721 and ERC20 implementation from OpenZeppelin. This project uses Moralis for IPFS storage for the NFT image and metadata.
 
+### Tech Stack
+1. Front-end:
+   1. Angular 11
+   2. Moralis SDK (used this for IPFS and played around with their SDK a bit)
+   3. web3.js
+2. Smart Contract
+   1. OpenZeppelin
+   2. Truffle
+   3. Ganache
+   4. Solidity
+
+### Requirements
+1. Node v14/16
+2. Moralis Server (Used for IPFS - You may set this up for free at https://moralis.io)
+3. Truffle v5
+4. Ganache
+5. Metamask Plugin
+
 ## Directory Structure
 
 For simplicity, I created the project on the same root as the Angular project. So the truffle files are just located in different folders and both share the same `package.json`.
@@ -13,17 +31,20 @@ For simplicity, I created the project on the same root as the Angular project. S
 Below are the key files/folders to take note of for this project.
 
     .
-    ├── contracts              # Solidity Contracts
-    ├── migrations             # Truffle migration scripts
-    ├── src                    # Angular app source files
+    ├── contracts                            # Solidity Contracts
+    ├── docs                                 # Required project docs
+    │   ├── avoiding_common_attacks.md       # avoiding common attacks
+    │   └── design_pattern_decisions.md      # design pattern decisions
+    ├── migrations                           # Truffle migration scripts
+    ├── src                                  # Angular app source files
     │   ├── environments
-    │   │    └── env.ts        # Angular config file which contains the contract address and Moralis server details
+    │   │    └── env.ts                      # Angular config file which contains the contract address and Moralis server details
     │   └── ...
-    ├── test                   # Truffle test scripts
-    ├── .env                   # File that needs to be created and contain the MNEMONIC environment variable for truffle
-    ├── package.json           # Angular dependencies together with Truffle dependencies (in devDependencies)
-    ├── README.md              # Main project documentation
-    ├── truffle-config.js      # Truffle configuration
+    ├── test                                 # Truffle test scripts
+    ├── .env                                 # File that needs to be created and contain the MNEMONIC environment variable for truffle
+    ├── package.json                         # Angular dependencies together with Truffle dependencies (in devDependencies)
+    ├── README.md                            # Main project documentation
+    ├── truffle-config.js                    # Truffle configuration
     └── ...
     
 
@@ -49,7 +70,10 @@ Create a .env file and add in the MNEMONIC environment variable for your test wa
 
 Add the generated mnemonic to the .env file you created.
 
-```MNEMONIC=<your mnemonic>```
+```
+MNEMONIC=<your mnemonic>
+RINKEBY_WALLET_PROVIDER=<wallet provider URL from Moralis or Infura>
+```
 
 Install all other dependencies
 
@@ -57,25 +81,25 @@ Install all other dependencies
 
 ### Run the tests
 
-Start ganache locally
+1. Start ganache locally at port 8545
 
 ```ganache-cli --port 8545```
 
-Deploy the contracts to ganache
+2. Deploy the contracts to ganache
 
 ```truffle migrate```
 
-Run the tests
+3. Run the tests
 
 ```truffle test```
 
-### Deploying the contracts public Testnets
+### Deploying the contracts Public Testnets
 
-Technically, this can be deployed in other networks (Polygon, BSC, Ropsten, etc), but for this project, I have deployed in Rinkeby.
+Technically, this can be deployed in other networks (Polygon, BSC, Ropsten, etc), but for this project, I have deployed in `Rinkeby Testnet`.
 
 You may use the same mnemonic for deploying the contract.  
 
-You may run the command below to derive the private key for your mnemonic.
+Run the command below to derive the private key for your mnemonic.
 
 ```npx mnemonic-to-private-key "<your mnemonic phrase>"``` 
 
@@ -83,14 +107,88 @@ You may import it to metamask to keep track of the funds using the private key.
 
 A good faucet for the Rinkeby network can be accessed here: https://faucets.chain.link/rinkeby. Just put the wallet address to get funds.
 
-You may get a wallet provider either from Moralis or Infura and set the `RINKEBY_WALLET_PROVIDER` in the `.env` file.
-
 To deploy, execute the migration through truffle.
 
 ```truffle migrate --network=rinkeby```
 
-After the deployment get the contract address for the deployed NiftyFiftyNFT smart contract and update the Angular DApp contract in `src/environments/env.ts` file.
+```
+Compiling your contracts...
+===========================
+> Everything is up to date, there is nothing to compile.
 
+
+
+Starting migrations...
+======================
+> Network name:    'rinkeby'
+> Network id:      4
+> Block gas limit: 30000000 (0x1c9c380)
+
+
+1_initial_migration.js
+======================
+
+   Deploying 'Migrations'
+   ----------------------
+   > transaction hash:    0xe8165adb62653878dab79798793104f05f749153f480ef03fecc353a091e3987
+   > Blocks: 2            Seconds: 20
+   > contract address:    0xbe5a79B3CAc98Cd4bEa77553926a08C40368eA6a
+   > block number:        9722701
+   > block timestamp:     1638123901
+   > account:             0x043fE6384c421141ec2D2B79ee4FbacebeF4907c
+   > balance:             0.09951689249806757
+   > gas used:            193243 (0x2f2db)
+   > gas price:           2.50000001 gwei
+   > value sent:          0 ETH
+   > total cost:          0.00048310750193243 ETH
+
+   Pausing for 2 confirmations...
+   ------------------------------
+   > confirmation number: 1 (block: 9722702)
+   > confirmation number: 2 (block: 9722703)
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:     0.00048310750193243 ETH
+
+
+2_deploy_NiftyFiftyNft.js
+=========================
+
+   Deploying 'NiftyFiftyNFT'
+   -------------------------
+   > transaction hash:    0x642294807e4feab1e33aba3abb8452de63517237fb78d02a6be25102393893b7
+   > Blocks: 1            Seconds: 12
+   > contract address:    0xA63eBd72D4f8021EBD40E7b734Bb0c9616a96b50
+   > block number:        9722705
+   > block timestamp:     1638123961
+   > account:             0x043fE6384c421141ec2D2B79ee4FbacebeF4907c
+   > balance:             0.191472074962670373
+   > gas used:            3172189 (0x30675d)
+   > gas price:           2.500000011 gwei
+   > value sent:          0 ETH
+   > total cost:          0.007930472534894079 ETH
+
+   Pausing for 2 confirmations...
+   ------------------------------
+   > confirmation number: 1 (block: 9722706)
+   > confirmation number: 2 (block: 9722707)
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:     0.007930472534894079 ETH
+
+
+Summary
+=======
+> Total deployments:   2
+> Final cost:          0.008413580036826509 ETH
+
+```
+
+After the deployment get the contract address for the deployed NiftyFiftyNFT smart contract and update the Angular DApp contract in `src/environments/env.ts` file.
 
 # DApp
 
