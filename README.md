@@ -81,7 +81,7 @@ Install all other dependencies
 
 ### Run the tests
 
-1. Start ganache locally at port 8545
+1. Start ganache locally at port `8545`
 
 ```ganache-cli --port 8545```
 
