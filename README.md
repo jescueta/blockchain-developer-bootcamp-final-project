@@ -2,7 +2,7 @@
 
 ## About
 
-This is a simple DApp that allows users/artists to mint their own NFT and receive royalties as they transfer/sell/trade them. The artist can select any ERC20 token of choice, and the amount of royalty. Royalties will be shared, 50-50, with the contract owner for the first 10 transfers. And thenafter, the artist will receive the royalties in full for all subsequent transfers.
+This is a simple DApp that allows users/artists to mint their own NFT and receive royalties as they transferred. The artist can select any ERC20 token of choice, and the amount of royalty. Royalties will be shared, 50-50, with the contract owner for the first 10 transfers. And thenafter, the artist will receive the royalties in full for all subsequent transfers.
 
 The smart contract leverages on ERC721 and ERC20 implementation from OpenZeppelin. This project uses Moralis for IPFS storage for the NFT image and metadata.
 
@@ -110,6 +110,8 @@ A good faucet for the Rinkeby network can be accessed here: https://faucets.chai
 To deploy, execute the migration through truffle.
 
 ```truffle migrate --network=rinkeby```
+
+Below contains the logs of the deployment done for this project.
 
 ```
 Compiling your contracts...
@@ -244,5 +246,10 @@ Navigate to `http://localhost:4200/`. The app will automatically reload if you c
 ## DApp deployed to Rinkeby Testnet
 
 https://niftyfifty.jescueta.com/
+
+
+## Screencast Walkthrough Video
+
+https://youtu.be/KgxG80MGDNU
 
 
