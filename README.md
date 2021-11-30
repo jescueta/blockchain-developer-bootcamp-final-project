@@ -194,11 +194,11 @@ After the deployment get the contract address for the deployed NiftyFiftyNFT sma
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.0.4.
 
-For this project, I wanted to play around and learn about the Moralis SDK. For this project, I used Moralis SDK which requires a server endpoint to be created and accessed by the DApp. Get your Moralis server URL and key here - https://moralis.io/.
+For this project, Moralis was used for IPFS to store NFT metadata and images. Get your Moralis server URL and key here - https://moralis.io/.
 
 ## Configure the DApp
 
-Secure the Application ID and Moralis Server URL from `https://moralis.io`
+Get the Application ID and Moralis Server URL from `https://moralis.io`
 
 Update the file in `src/environments/env.ts` to .
 
